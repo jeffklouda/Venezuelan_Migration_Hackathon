@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style> /* set the CSS */
+
+body { font: 12px Arial;}
+
+path {
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: none;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    /*width: 60px;
+    height: 28px;*/
+    padding: 5px;
+    font: 12px sans-serif;
+    /*background: lightsteelblue;*/
+    border: 0px;
+    /*border-radius: 8px;*/
+    pointer-events: none;
+}
+
+</style>
+<body>
+
+<!-- load the d3.js library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+<script src="https://d3js.org/d3-color.v1.min.js"></script>
+<script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+<script>
+
+// Set the dimensions of the canvas / graph
+var margin = {top: 30, right: 20, bottom: 30, left: 50},
+    width = 1200 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+// Parse the date / time
+var parseDate = d3.time.format("%y-%b").parse;
+var formatTime = d3.time.format("%B %Y");
+
+// Set the ranges
+var x = d3.time.scale().range([0, width]);
+var y = d3.scale.linear().range([height, 0]);
+
+// Define the axes
+var xAxis = d3.svg.axis().scale(x)
+    .orient("bottom").ticks(3);
+
+var yAxis = d3.svg.axis().scale(y)
+    .orient("left").ticks(4);
+
+// Define the lines
+var valuelineAntioquia = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Antioquia); });
+
+var valuelineAtlantico = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Atlantico); });
+
+var valuelineBogota = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Bogota); });
+
+var valuelineBoyaca = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Boyaca); });
+
+var valuelineBolivar = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Bolivar); });
+
+var valuelineCaldas = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Caldas); });
+
+var valuelineCaqueta = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Caqueta); });
+
+var valuelineCauca = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Cauca); });
+
+var valuelineCesar = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Cesar); });
+
+var valuelineCordoba = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Cordoba); });
+
+var valuelineCundinamarca = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Cundinamarca); });
+
+var valuelineChoco = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Choco); });
+
+var valuelineHuila = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Huila); });
+
+var valuelineLaGuajira = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.LaGuajira); });
+
+var valuelineMagdalena = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Magdalena); });
+
+var valuelineMeta = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Meta); });
+
+var valuelineNarino = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Narino); });
+
+var valuelineNorteDeSantander = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.NorteDeSantander); });
+
+var valuelineQuindio = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Quindio); });
+
+var valuelineRisaralda = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Risaralda); });
+
+var valuelineSantander = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Santander); });
+
+var valuelineSantander = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Santander); });
+
+var valuelineSucre = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Sucre); });
+
+var valuelineTolima = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Tolima); });
+
+var valuelineValleDelCauca = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.ValleDelCauca); });
+
+var valuelineTotal = d3.svg.line()
+    .x(function(d) { return x(d.Date); })
+    .y(function(d) { return y(d.Total); });
+
+// Define the div for the tooltip
+var div = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+// Adds the svg canvas
+var svg = d3.select("body")
+    .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+        .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
+
+// Get the data
+d3.csv("data.csv", function(error, data) {
+    data.forEach(function(d) {
+        d.Date = parseDate(d.Date);
+        d.Antioquia = +d.Antioquia;
+        d.Atlantico = +d.Atlantico;
+        d.Bogota = +d.Bogota;
+        d.Bolivar = +d.Bolivar;
+        d.Boyaca = +d.Boyaca;
+        d.Caldas = +d.Caldas;
+        d.Caqueta = +d.Caqueta;
+        d.Cauca = +d.Cauca;
+        d.Cesar = +d.Cesar;
+        d.Cordoba = +d.Cordoba;
+        d.Cundinamarca = +d.Cundinmarca;
+        d.Choco = +d.Choco;
+        d.Huila = +d.Huila;
+        d.LaGuajira = +d.LaGuajira;
+        d.Magdalena = +d.Magdalena;
+        d.Meta = +d.Meta;
+        d.Narino = +d.Narino;
+        d.NorteDeSantander = +d.NorteDeSantander;
+        d.Quindio = +d.Quindio;
+        d.Risaralda = +d.Risaralda;
+        d.Santander = +d.Santander;
+        d.Sucre = +d.Sucre;
+        d.Tolima = +d.Tolima;
+        d.ValleDelCauca = +d.ValleDelCauca;
+        d.Total = +d.Total;
+    });
+
+    // Scale the range of the data
+    x.domain(d3.extent(data, function(d) { return d.Date; }));
+    y.domain([0, d3.max(data, function(d) { return d.Bogota; })]);
+
+    var maxValue = d3.max(data, function(d) { return d.Bogota; });
+
+    var paths = [];
+
+    // Add the valueline path.
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Antioquia; })/maxValue)))
+        .attr("d", valuelineAntioquia));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Atlantico; })/maxValue)))
+        .attr("d", valuelineAtlantico));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Bogota; })/maxValue)))
+        .attr("d", valuelineBogota));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Bolivar; })/maxValue)))
+        .attr("d", valuelineBolivar));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Boyaca; })/maxValue)))
+        .attr("d", valuelineBoyaca));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Caldas; })/maxValue)))
+        .attr("d", valuelineCaldas));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Caqueta; })/maxValue)))
+        .attr("d", valuelineCaqueta));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Cauca; })/maxValue)))
+        .attr("d", valuelineCauca));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Cesar; })/maxValue)))
+        .attr("d", valuelineCesar));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Cordoba; })/maxValue)))
+        .attr("d", valuelineCordoba));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Cundinamarca; })/maxValue)))
+        .attr("d", valuelineCundinamarca));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Choco; })/maxValue)))
+        .attr("d", valuelineChoco));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Huila; })/maxValue)))
+        .attr("d", valuelineHuila));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.LaGuajira; })/maxValue)))
+        .attr("d", valuelineLaGuajira));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Magdalena; })/maxValue)))
+        .attr("d", valuelineMagdalena));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Magdalena; })/maxValue)))
+        .attr("d", valuelineMagdalena));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Meta; })/maxValue)))
+        .attr("d", valuelineMeta));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Meta; })/maxValue)))
+        .attr("d", valuelineMeta));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Narino; })/maxValue)))
+        .attr("d", valuelineNarino));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.NorteDeSantander; })/maxValue)))
+        .attr("d", valuelineNorteDeSantander));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Quindio; })/maxValue)))
+        .attr("d", valuelineQuindio));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Risaralda; })/maxValue)))
+        .attr("d", valuelineRisaralda));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Santander; })/maxValue)))
+        .attr("d", valuelineSantander));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Sucre; })/maxValue)))
+        .attr("d", valuelineSucre));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Tolima; })/maxValue)))
+        .attr("d", valuelineTolima));
+
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.ValleDelCauca; })/maxValue)))
+        .attr("d", valuelineValleDelCauca));
+
+    console.log(paths);
+
+    // Add the scatterplot
+    /*svg.selectAll("dot")
+        .data(data)
+    .enter().append("circle")
+        .attr("r", 5)
+        .attr("cx", function(d) { return x(d.date); })
+        .attr("cy", function(d) { return y(d.close); })
+        .on("mouseover", function(d) {
+            div.transition()
+                .duration(200)
+                .style("opacity", .9);
+            div	.html(formatTime(d.date) + "<br/>"  + d.close)
+                .style("left", (d3.event.pageX) + "px")
+                .style("top", (d3.event.pageY - 28) + "px");
+            })
+        .on("mouseout", function(d) {
+            div.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });*/
+
+    // Add the X Axis
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    // Add the Y Axis
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+
+    d3.selectAll('g.tick')
+    .select('line')
+    .style('stroke', "black");
+
+    console.log(totalLength);
+
+    //First animation duration
+    for (i = 0; i < paths.length; i++) {
+        var totalLength = paths[i][0][0].getTotalLength();
+        d3.select(paths[i][0][0])
+            .attr("stroke-dasharray", totalLength/2 + " " + totalLength )
+            .attr("stroke-dashoffset", totalLength/2)
+            .transition()
+                .duration(3000)
+                .ease("linear")
+                .attr("stroke-dashoffset", 0);
+    }
+
+    //Second animation duration
+    window.setTimeout(function() {
+    for (i = 0; i < paths.length; i++) {
+        var totalLength = paths[i][0][0].getTotalLength();
+        d3.select(paths[i][0][0])
+            .attr("stroke-dasharray", totalLength + " " + totalLength)
+            .attr("stroke-dashoffset", totalLength/2)
+            .transition()
+                .duration(3000)
+                .ease("linear")
+                .attr("stroke-dashoffset", 0);
+    }}, 6000);
+
+    // Add interactive functionality
+    window.setTimeout(function() {
+    svg.selectAll("dot")
+        .data(data)
+    .enter().append("circle")
+        .attr("r", 10)
+        .style("opacity", 0 )
+        .attr("cx", function(d) { return x(d.Date); })
+        .attr("cy", function(d) { return y(d.Bogota); })
+        .on("mouseover", function(d) {
+            div.transition()
+                .duration(200)
+                .style("opacity", .9);
+            div	.html("Bogota<br/>" + formatTime(d.Date) + "<br/>"  + d.Bogota)
+                .style("color", "white")
+                .style("left", (d3.event.pageX) + "px")
+                .style("top", (d3.event.pageY - 28) + "px")
+                .style("height", d.Bogota/2000 + "px")
+                .style("width", d.Bogota/2000 + "px")
+                .style("background", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d.Bogota; })/maxValue)))
+                .style("border-radius", d.Bogota/2000 + "px");
+            })
+        .on("mouseout", function(d) {
+            div.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
+    }, 10000);
+
+});
+
+</script>
+</body>
