@@ -1,7 +1,7 @@
 // Set the dimensions of the canvas / graph
-var margin = {top: 30, right: 20, bottom: 30, left: 100},
+var margin = {top: 30, right: 100, bottom: 30, left: 100},
     width = 800 - margin.left - margin.right,
-    height = 800 - margin.top - margin.bottom;
+    height = 725 - margin.top - margin.bottom;
 
 // Parse the date / time
 var parseDate = d3.time.format("%y-%b").parse;
@@ -164,29 +164,52 @@ for (var i = 0; i < departments.length; i++) {
 
 var maxValue = 0;
 
-updateData();
+var toggler = false;
+
+updateData(false);
 
 for (var i = 0; i < departments.length; i++) {
-    document.getElementById(departments[i]).onclick = function(d) {
-        var dept = d.srcElement.id;
-        dSelector[dept] = !dSelector[dept];
-        d3.select(("#" + dept))
-            .transition()
-            .duration(250)
-            .style("fill", "#BBBBBB");
-        updateData();
-    };
+    d3.select(("#" + departments[i])).on("mouseover", function(d) {
+        console.log("mo");
+        if (!toggler) {
+            var dept = this.id;
+            singleDepartment(dept, false);
+        }
+    })
+    .on("mouseout", function(d) {
+        if (!toggler) {
+            showAll(false);
+        }
+    })
+    .on("click", function(d){
+        console.log("click");
+        var dept = this.id;
+        if (toggler) {
+            showAll(false);
+        } else {
+            singleDepartment(dept, false);
+        }
+        toggler = !toggler;
+    });
 }
 
-document.getElementById("ViewAll").onclick = function(d) {
+function showAll(animate) {
     for (var i = 0; i < departments.length; i++) {
         dSelector[departments[i]] = true;
     }
-    updateData();
+    updateData(animate);
+}
+
+function singleDepartment(dept, animate) {
+    for (var i = 0; i < departments.length; i++) {
+        dSelector[departments[i]] = false;
+    }
+    dSelector[dept] = true;
+    updateData(animate);
 }
 
 // Get the data
-function updateData() {
+function updateData(animate) {
 
     svg.selectAll("*").remove();
     var yMax = 0;
@@ -209,6 +232,18 @@ function updateData() {
     x.domain(d3.extent(data, function(d) { return d.Date; }));
     y.domain([0, yMax*1.1]);
 
+    var dates = ["17-Mar", "17-Nov", "18-May", "18-Oct", "19-Jan", "19-Feb", "19-Apr", "19-Jun"]
+for (var i = 0; i < dates.length; i++) {
+    svg.append("line")
+        .attr("x1", x(parseDate(dates[i])))  //<<== change your code here
+        .attr("y1", (height - margin.top - margin.bottom) * 0.1)
+        .attr("x2", x(parseDate(dates[i])))  //<<== and here
+        .attr("y2", height)
+        .style("stroke-width", 2)
+        .style("stroke-dasharray", "7,7")
+        .style("stroke", "#EEEEEE")
+        .style("fill", "none");
+}
     var paths = [];
 
     function addLine(paths, data, line, localMax, max, id) {
@@ -221,7 +256,7 @@ function updateData() {
             .attr("d", line));
         d3.select(id)
             .transition()
-            .duration(250)
+            .duration(750)
             .style("fill", deptColor);
     }
 
@@ -243,17 +278,19 @@ function updateData() {
     // Add the X Axis
     svg.append("g")
         .attr("class", "x axis")
+        .attr("fill", "#999")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis);
 
     // Add the Y Axis
     svg.append("g")
         .attr("class", "y axis")
+        .attr("fill", "#999")
         .call(yAxis);
 
     d3.selectAll('g.tick')
     .select('line')
-    .style('stroke', "black");
+    .style('stroke', "#BBBBBB");
 
     //First animation duration
     /*for (i = 0; i < paths.length; i++) {
@@ -280,7 +317,7 @@ function updateData() {
                 .attr("stroke-dashoffset", 0);
     }}, 6000);*/
 
-    var maxArea = 10000;
+    var maxArea = 5000;
 
     function getRadiusFromArea(area) {
         return Math.sqrt(area/3.14);
@@ -296,41 +333,40 @@ function updateData() {
             svg.selectAll("dot")
                 .data(data)
             .enter().append("circle")
-                .attr("r", 5)
+                .attr("r", 2)
                 .attr("department", departments[i])
-                .style("opacity", 0 )
+                .style("fill", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d[departments[i]]; })/maxValue)))
+                .style("stroke-width", 1.7)
                 .attr("cx", function(d) { return x(d.Date); })
                 .attr("cy", function(d) { return y(d[departments[i]]); })
                 .on("mouseover", function(d) {
                     var dept = this.attributes.department.nodeValue;
-                    console.log(this);
-                    div.transition()
+                    console.log(this.cx.baseVal.valueAsString);
+                    var cArea = maxArea*(d[dept]/maxValue);
+                    var cr = getRadiusFromArea(cArea);
+                    svg.append("circle")
+                        .attr("r", cr)
+                        .style("fill", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d[dept]; })/maxValue)))
+                        .style("opacity", 0)
+                        .attr("cx", this.cx.baseVal.valueAsString)
+                        .attr("cy", this.cy.baseVal.valueAsString)
+                        .on("mouseout", function(d) {
+                            console.log(this);
+                            this.remove();
+                        })
+                        .on("click", function(d) {
+                            if (!toggler) {
+                                singleDepartment(dept, false);
+                            } else {
+                                showAll(false);
+                            }
+                            toggler = !toggler;
+                        })
+                        .transition()
                         .duration(200)
                         .style("opacity", .5);
-                    var cArea = maxArea*(d[dept]/maxValue);
-                    var cr = getRadiusFromArea(cArea); // circle radius
-                    div
-                        .style("left", (d3.event.pageX - cr) + "px")
-                        .style("top", (d3.event.pageY - cr) + "px")
-                        .style("height", (cr*2) + "px")
-                        .style("width", (cr*2) + "px")
-                        .style("background", d3.interpolatePlasma(1 - (d3.max(data, function(d) { return d[dept]; })/maxValue)))
-                        .style("border-radius", (cr*2) + "px");
+                    div.transition()
                     })
-                .on("mouseout", function(d) {
-                    div.transition()
-                        .duration(500)
-                        .style("opacity", 0)})
-                .on("click", function(d) {
-                    div.transition()
-                        .duration(500)
-                        .style("opacity", 0);
-                    for (var i = 0; i < departments.length; i++) {
-                        dSelector[departments[i]] = false;
-                    }
-                    dSelector[this.attributes.department.nodeValue] = true;
-                    updateData();
-                });
         }
     }
 })};
