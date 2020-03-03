@@ -1,0 +1,72 @@
+body {
+    font: 12px;
+    font-family: trade-gothic-next, sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+path {
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+img {
+    height:100px;
+    width:100px;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: none;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    /*width: 60px;
+    height: 28px;*/
+    padding: 5px;
+    font: 12px sans-serif;
+    /*background: lightsteelblue;*/
+    border: 0px;
+    /*border-radius: 8px;*/
+    pointer-events: none;
+}
+
+#Bogota.inactive {
+    fill: gray;
+}
+
+.department {
+    stroke: none;
+    fill: lightgray;
+}
+
+#viz {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+}
+
+#map-selector {
+    height: 600px;
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /*background: green;*/
+}
+
+#ViewAll {
+    font-family: trade-gothic-next, sans-serif;
+    height: 3rem;
+    width: 6rem;
+    background: white;
+    border: 0.1rem solid #0d0887;
+    border-radius: 3rem;
+}
