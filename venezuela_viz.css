@@ -45,11 +45,11 @@ img {
 
 div.tooltip {
     position: absolute;
-    text-align: center;
-    /*width: 60px;
-    height: 28px;*/
+    text-align: left;
+    width: 250px;
     padding: 5px;
-    font: 12px sans-serif;
+    font-size: 1rem;
+    color: black;
     /*background: lightsteelblue;*/
     border: 0px;
     /*border-radius: 8px;*/

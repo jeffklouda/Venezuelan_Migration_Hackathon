@@ -5,7 +5,7 @@ var margin = {top: 30, right: 100, bottom: 30, left: 100},
 
 // Parse the date / time
 var parseDate = d3.time.format("%y-%b").parse;
-var formatTime = d3.time.format("%B %Y");
+var formatDate = d3.time.format("%b %Y");
 
 // Set the ranges
 var x = d3.time.scale().range([0, width]);
@@ -17,6 +17,17 @@ var xAxis = d3.svg.axis().scale(x)
 
 var yAxis = d3.svg.axis().scale(y)
     .orient("left").ticks(4);
+
+var milestones = {
+        "17-Mar":"Decline in price of oil, which accounts for 96% of Venezuelan exports, causes decline of oil production. Government policies favor paying off debt over social welfare programs, causing citizens to suffer. (1)",
+        "17-Nov":"The government raises wages and prints more bolivars in an effort to make up for the increasing price of foreign goods. This creates a recipe for further inflation. (2)",
+        "18-May":"Nicolás Maduro is reelected as president in an election not recognized by more than 60 nations, creating desperation in citizens. (3)",
+        "18-Oct":"85% of essential medicines are scarce - citizens are only able to find 1.5 out of every 10 medications they need. (4)",
+        "19-Jan":"Maduro is inaugurated for his second term. Juan Guaido, a lawmaker, assumes leadership of the opposition. Guaido swears himself in as interim president. He is recognized as the country's legitimate president by the U.S, Canada, and Brazil, among other countries. (3)",
+        "19-Feb":"Maduro shuts Venezuela's border with Colombia to block U.S. sponsored attempts to deliver humanitarian aid because of the U.S.'s recognition of Guaido as president. (5)",
+        "19-Apr":"U.S. implements sanctions against the Central Bank of Venezuela, cutting off the access to U.S. currency and limiting the ability to conduct international transactions, in order to put more pressure on Maduro's regime. (6)",
+        "19-Jun":"Minimum wage is worth $5.43 a month, which can only purchase 2.8% of the basic food basket for a family of five. (4)"
+};
 
 var departments = [
     "Antioquia",
@@ -44,6 +55,33 @@ var departments = [
     "Tolima",
     "ValleDelCauca"
 ]
+
+var departmentMap = {
+    Antioquia:"Antioquia",
+    Atlantico:"Atlántico",
+    Bogota:"Bogotá",
+    Boyaca:"Boyacá",
+    Bolivar:"Bolívar",
+    Caldas:"Caldas",
+    Caqueta:"Caquetá",
+    Cauca:"Cauca",
+    Cesar:"Cesar",
+    Cordoba:"Córdoba",
+    Cundinamarca:"Cundinamarca",
+    Choco:"Chocó",
+    Huila:"Huila",
+    LaGuajira:"La Guajira",
+    Magdalena:"Magdalena",
+    Meta:"Meta",
+    Narino:"Nariño",
+    NorteDeSantander:"Norte de Santander",
+    Quindio:"Quindío",
+    Risaralda:"Risaralda",
+    Santander:"Santander",
+    Sucre:"Sucre",
+    Tolima:"Tolima",
+    ValleDelCauca:"Valle del Cauca"
+};
 
 // Define the lines
 var valuelines = {};
@@ -162,6 +200,16 @@ for (var i = 0; i < departments.length; i++) {
     dSelector[departments[i]] = true;
 }
 
+var justSet = false;
+
+d3.select("#map-selector").on("click", function(d) {
+    if (toggler && !justSet) {
+        toggler = false;
+        showAll();
+    }
+    justSet = false;
+});
+
 var maxValue = 0;
 
 var toggler = false;
@@ -170,46 +218,45 @@ updateData(false);
 
 for (var i = 0; i < departments.length; i++) {
     d3.select(("#" + departments[i])).on("mouseover", function(d) {
-        console.log("mo");
         if (!toggler) {
             var dept = this.id;
-            singleDepartment(dept, false);
+            singleDepartment(dept);
         }
     })
     .on("mouseout", function(d) {
         if (!toggler) {
-            showAll(false);
+            showAll();
         }
     })
     .on("click", function(d){
-        console.log("click");
         var dept = this.id;
         if (toggler) {
-            showAll(false);
+            showAll();
         } else {
-            singleDepartment(dept, false);
+            singleDepartment(dept);
+            justSet=true;
+            toggler = true;
         }
-        toggler = !toggler;
     });
 }
 
-function showAll(animate) {
+function showAll() {
     for (var i = 0; i < departments.length; i++) {
         dSelector[departments[i]] = true;
     }
-    updateData(animate);
+    updateData(false);
 }
 
-function singleDepartment(dept, animate) {
+function singleDepartment(dept) {
     for (var i = 0; i < departments.length; i++) {
         dSelector[departments[i]] = false;
     }
     dSelector[dept] = true;
-    updateData(animate);
+    updateData(true);
 }
 
 // Get the data
-function updateData(animate) {
+function updateData(solo) {
 
     svg.selectAll("*").remove();
     var yMax = 0;
@@ -227,38 +274,14 @@ function updateData(animate) {
             }
         });
 
-    console.log(maxValue);
     // Scale the range of the data
     x.domain(d3.extent(data, function(d) { return d.Date; }));
     y.domain([0, yMax*1.1]);
 
-    var dates = ["17-Mar", "17-Nov", "18-May", "18-Oct", "19-Jan", "19-Feb", "19-Apr", "19-Jun"]
-for (var i = 0; i < dates.length; i++) {
-    svg.append("line")
-        .attr("x1", x(parseDate(dates[i])))  //<<== change your code here
-        .attr("y1", (height - margin.top - margin.bottom) * 0.1)
-        .attr("x2", x(parseDate(dates[i])))  //<<== and here
-        .attr("y2", height)
-        .style("stroke-width", 2)
-        .style("stroke-dasharray", "7,7")
-        .style("stroke", "#EEEEEE")
-        .style("fill", "none");
-}
-    var paths = [];
-
-    function addLine(paths, data, line, localMax, max, id) {
-        // Add the valueline path
-        var deptColor = d3.interpolatePlasma(1 - localMax/max);
-        paths.push(svg.append("path")
-            .data([data])
-            .attr("class", "line")
-            .style("stroke", deptColor)
-            .attr("d", line));
-        d3.select(id)
-            .transition()
-            .duration(750)
-            .style("fill", deptColor);
+    if (solo) {
+        addMilestones();
     }
+    var paths = [];
 
     /*for (var i = 0; i < departments.length; i++) {
         addLine(paths, data, valuelines[departments[i]], d3.max(data, function(d) { return d[departments[i]]; }), maxValue, ("#"+departments[i]));
@@ -292,40 +315,7 @@ for (var i = 0; i < dates.length; i++) {
     .select('line')
     .style('stroke', "#BBBBBB");
 
-    //First animation duration
-    /*for (i = 0; i < paths.length; i++) {
-        var totalLength = paths[i][0][0].getTotalLength();
-        d3.select(paths[i][0][0])
-            .attr("stroke-dasharray", totalLength/2 + " " + totalLength )
-            .attr("stroke-dashoffset", totalLength/2)
-            .transition()
-                .duration(3000)
-                .ease("linear")
-                .attr("stroke-dashoffset", 0);
-    }
-
-    //Second animation duration
-    window.setTimeout(function() {
-    for (i = 0; i < paths.length; i++) {
-        var totalLength = paths[i][0][0].getTotalLength();
-        d3.select(paths[i][0][0])
-            .attr("stroke-dasharray", totalLength + " " + totalLength)
-            .attr("stroke-dashoffset", totalLength/2)
-            .transition()
-                .duration(3000)
-                .ease("linear")
-                .attr("stroke-dashoffset", 0);
-    }}, 6000);*/
-
     var maxArea = 5000;
-
-    function getRadiusFromArea(area) {
-        return Math.sqrt(area/3.14);
-    }
-
-    function getColor(x) {
-        return
-    }
 
     // Add interactive functionality
     for (var i = 0; i < departments.length; i++) {
@@ -341,7 +331,6 @@ for (var i = 0; i < dates.length; i++) {
                 .attr("cy", function(d) { return y(d[departments[i]]); })
                 .on("mouseover", function(d) {
                     var dept = this.attributes.department.nodeValue;
-                    console.log(this.cx.baseVal.valueAsString);
                     var cArea = maxArea*(d[dept]/maxValue);
                     var cr = getRadiusFromArea(cArea);
                     svg.append("circle")
@@ -351,22 +340,86 @@ for (var i = 0; i < dates.length; i++) {
                         .attr("cx", this.cx.baseVal.valueAsString)
                         .attr("cy", this.cy.baseVal.valueAsString)
                         .on("mouseout", function(d) {
-                            console.log(this);
+                            div.transition()
+                                .duration(200)
+                                .style("opacity", 0);
                             this.remove();
                         })
                         .on("click", function(d) {
                             if (!toggler) {
-                                singleDepartment(dept, false);
+                                singleDepartment(dept);
                             } else {
                                 showAll(false);
                             }
                             toggler = !toggler;
+                            div.transition()
+                                .duration(200)
+                                .style("opacity", 0);
                         })
                         .transition()
                         .duration(200)
                         .style("opacity", .5);
                     div.transition()
-                    })
+                        .duration(200)
+                        .style("opacity", 1);
+                    div
+                        .html("<p>" + departmentMap[dept] + "<br>" + formatDate(d.Date) + "<br>" + d[dept].toLocaleString() + "</p>")
+                        .style("left", (d3.event.pageX - cr) + "px")
+                        .style("top", (d3.event.pageY - 22 + cr) + "px");
+                })
         }
     }
 })};
+
+function addLine(paths, data, line, localMax, max, id) {
+    // Add the valueline path
+    var deptColor = d3.interpolatePlasma(1 - localMax/max);
+    paths.push(svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .style("stroke", deptColor)
+        .attr("d", line));
+    d3.select(id)
+        .transition()
+        .duration(750)
+        .style("fill", deptColor);
+}
+
+function getRadiusFromArea(area) {
+    return Math.sqrt(area/3.14);
+}
+
+function addMilestones() {
+    var numDots = 40;
+    for (let date in milestones) {
+        for (var i = 0; i < numDots; i++) {
+            svg.append("circle")
+                .attr("r", 2)
+                .attr("cx", x(parseDate(date)))
+                .attr("cy", (height - margin.top - margin.bottom) * 0.15 + (height * 0.95 * i/numDots) - margin.top)
+                .attr("mDate", date)
+                .style("stroke-width", 2)
+                .style("stroke-dasharray", "7,7")
+                .style("fill", "#EEE")
+                .on("mouseover", function(d) {
+                    div.transition()
+                        .duration(200)
+                        .style("opacity", 1);
+                    if (this.cx.baseVal.value < width/2) {
+                        div.html("<p>" + formatDate(parseDate(this.attributes.mDate.value)) + "<br>" + milestones[this.attributes.mDate.value] + "</p>")
+                            .style("left", (d3.event.pageX) + "px")
+                            .style("top", (d3.event.pageY - 28) + "px");
+                    } else {
+                        div.html("<p>" + formatDate(parseDate(this.attributes.mDate.value)) + "<br>" + milestones[this.attributes.mDate.value] + "</p>")
+                            .style("left", (d3.event.pageX - 250) + "px")
+                            .style("top", (d3.event.pageY - 28) + "px");
+                    }
+                })
+                .on("mouseout", function(d) {
+                    div.transition()
+                        .duration(200)
+                        .style("opacity", 0);
+                });
+            }
+    }
+}
