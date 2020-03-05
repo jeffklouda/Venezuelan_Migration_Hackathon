@@ -364,7 +364,7 @@ function updateData(solo) {
                         .style("opacity", 1);
                     div
                         .html("<p>" + departmentMap[dept] + "<br>" + formatDate(d.Date) + "<br>" + d[dept].toLocaleString() + "</p>")
-                        .style("left", (d3.event.pageX - cr) + "px")
+                        .style("left", (d3.event.pageX) + "px")
                         .style("top", (d3.event.pageY - 22 + cr) + "px");
                 })
         }
