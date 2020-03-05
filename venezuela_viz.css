@@ -49,11 +49,21 @@ div.tooltip {
     width: 250px;
     padding: 5px;
     font-size: 1rem;
-    color: black;
+    color: #888;
+    font-family: trade-gothic-next-condensed, sans-serif;
+    font-weight: 400;
+    font-style: normal;
     /*background: lightsteelblue;*/
     border: 0px;
     /*border-radius: 8px;*/
     pointer-events: none;
+}
+
+div.tooltip b {
+    font-size: 1rem;
+    font-family: trade-gothic-next-condensed, sans-serif;
+    font-weight: 800;
+    font-style: normal;
 }
 
 #Bogota.inactive {

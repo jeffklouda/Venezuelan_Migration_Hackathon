@@ -311,6 +311,15 @@ function updateData(solo) {
         .attr("fill", "#999")
         .call(yAxis);
 
+    svg.append("text")
+      .attr("transform", "rotate(90)")
+      .attr("y", - width - (margin.left / 4))
+      .attr("x",0 + (height / 2))
+      .attr("dy", "1rem")
+      .style("text-anchor", "middle")
+      .style("fill", "#999")
+      .text("Number of Venezuelan Migrants");
+
     d3.selectAll('g.tick')
     .select('line')
     .style('stroke', "#BBBBBB");
@@ -363,7 +372,7 @@ function updateData(solo) {
                         .duration(200)
                         .style("opacity", 1);
                     div
-                        .html("<p>" + departmentMap[dept] + "<br>" + formatDate(d.Date) + "<br>" + d[dept].toLocaleString() + "</p>")
+                        .html("<p><b>" + departmentMap[dept] + "</b><br>" + formatDate(d.Date) + "<br>" + d[dept].toLocaleString() + "</p>")
                         .style("left", (d3.event.pageX) + "px")
                         .style("top", (d3.event.pageY - 22 + cr) + "px");
                 })
@@ -393,6 +402,12 @@ function addMilestones() {
     var numDots = 40;
     for (let date in milestones) {
         for (var i = 0; i < numDots; i++) {
+            svg.append("line")
+                .attr("x1", x(parseDate(date)))
+                .attr("y1", (height))
+                .attr("x2", x(parseDate(date)))
+                .attr("y2", (height-margin.top - margin.bottom) * 0.1)
+                .style("stroke-width", 4);
             svg.append("circle")
                 .attr("r", 2)
                 .attr("cx", x(parseDate(date)))
@@ -406,11 +421,11 @@ function addMilestones() {
                         .duration(200)
                         .style("opacity", 1);
                     if (this.cx.baseVal.value < width/2) {
-                        div.html("<p>" + formatDate(parseDate(this.attributes.mDate.value)) + "<br>" + milestones[this.attributes.mDate.value] + "</p>")
+                        div.html("<p><b>" + formatDate(parseDate(this.attributes.mDate.value)) + "</b><br>" + milestones[this.attributes.mDate.value] + "</p>")
                             .style("left", (d3.event.pageX) + "px")
                             .style("top", (d3.event.pageY - 28) + "px");
                     } else {
-                        div.html("<p>" + formatDate(parseDate(this.attributes.mDate.value)) + "<br>" + milestones[this.attributes.mDate.value] + "</p>")
+                        div.html("<p><b>" + formatDate(parseDate(this.attributes.mDate.value)) + "</b><br>" + milestones[this.attributes.mDate.value] + "</p>")
                             .style("left", (d3.event.pageX - 250) + "px")
                             .style("top", (d3.event.pageY - 28) + "px");
                     }
